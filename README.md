@@ -1,6 +1,14 @@
 # quicktunnel
 Quick Local tunnel (netplan) using sit
 
+### Summerize
+ - install necessary pkg`s (iproute2 netplan.io) and check the sit module
+ - unmask systemd-networkd
+ - creating netplan yaml file and network file to route traffic from local gateway
+   
+### To do:
+ - add other protocle
+
 --------------------------
 ![image](https://github.com/user-attachments/assets/e6047385-80a7-4d73-a24e-f1042ed94398)
 
