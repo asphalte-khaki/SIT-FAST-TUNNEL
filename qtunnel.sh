@@ -3,7 +3,11 @@ CYAN="\e[96m"
 GREEN="\e[92m"
 YELLOW="\e[93m"
 RED="\e[91m"
+BLUE="\e[94m"
+MAGENTA="\e[95m"
+WHITE="\e[97m"
 NC="\e[0m"
+BOLD=$(tput bold)
 clear
 logo1="     ______    _______    __      _______        __      _____  ___   "
 logo2="    /      \  |   __  \  |  \    /       \      /  \     \    \|   \  "
