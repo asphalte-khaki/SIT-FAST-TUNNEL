@@ -10,6 +10,11 @@
 ### To do:
  - add other protocle
 
+### Error Explanation
+#### If you see this error at the beginning:
+ - (Error: SIT (Simple Internet Transition) module is not supported on this system. Local tunneling cannot proceed)
+#### What this means:
+ - This error indicates that the sit module required for local tunneling is not supported in your server’s kernel. As a result, you cannot proceed with the tunnel setup using this module on this system.
 --------------------------
 
 ![image](https://github.com/user-attachments/assets/e6047385-80a7-4d73-a24e-f1042ed94398)
