@@ -35,8 +35,11 @@ echo -e "\e[93m+-------------------------------------+\e[0m"
 echo ""
 echo -ne "$YELLOW Enter desired tunnel name (e.g. tun0 or farzad) $NC"
 read mytunnel && echo && echo
-echo -ne "$YELLOW Enter current server IPv4 address $GREEN $public_ip $NC"
-read ipv4 && echo && echo
+echo -ne "$YELLOW Enter current server IPv4 address [$GREEN $public_ip $YELLOW]: $NC"
+read ipv4
+ipv4=${ipv4:-$public_ip}
+echo "Selected IPv4: $ipv4"
+echo && echo
 echo -ne "$YELLOW Enter the local IPv6 private range (e.g. 2001:db8:85a3:1b2e::1 or 2002:db8:85a3:1b2e::1) $NC"
 read local_ipv6 && echo && echo
 echo -ne "$YELLOW Enter the gateway (remote) IPv6 private address (e.g. 2001:db8:85a3:1b2e::2 or 2002:db8:85a3:1b2e::2) $NC"
