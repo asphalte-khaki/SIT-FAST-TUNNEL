@@ -21,11 +21,14 @@ echo -e "${BLUE}${logo5:0:24}${RED}${logo5:24:19}${WHITE}${logo5:43:14}${GREEN}$
 echo -e "${BLUE}${logo6:0:24}${RED}${logo6:24:19}${WHITE}${logo6:43:14}${GREEN}${logo6:57}${NC}"
 echo -e "${BLUE}${logo7:0:24}${RED}${logo7:24:19}${WHITE}${logo7:43:14}${GREEN}${logo7:57}${NC}"
 }
-logo
 modprobe sit && apt-get install -y iproute2 netplan.io jq && systemctl unmask systemd-networkd && systemctl enable systemd-networkd && systemctl start systemd-networkd
 content=$(curl -s "http://ipwho.is" || true)
 public_ip=$(echo "$content" | jq -r .ip)
 clear
+logo
+echo ""
+echo -e "\e[93m+-------------------------------------+\e[0m"
+echo ""
 echo -ne "$YELLOW Enter desired tunnel name (e.g. tun0 or farzad) $NC"
 read mytunnel && echo && echo
 echo -ne "$YELLOW Enter current server IPv4 address $GREEN $public_ip $NC"
