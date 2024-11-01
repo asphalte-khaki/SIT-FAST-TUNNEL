@@ -25,6 +25,17 @@ echo -e "${BLUE}${logo5:0:24}${RED}${logo5:24:19}${WHITE}${logo5:43:14}${GREEN}$
 echo -e "${BLUE}${logo6:0:24}${RED}${logo6:24:19}${WHITE}${logo6:43:14}${GREEN}${logo6:57}${NC}"
 echo -e "${BLUE}${logo7:0:24}${RED}${logo7:24:19}${WHITE}${logo7:43:14}${GREEN}${logo7:57}${NC}"
 }
+compare_ipv6_range() {
+  local ipv6_1="$1"
+  local ipv6_2="$2"
+  local range_1="${ipv6_1%::*}"
+  local range_2="${ipv6_2%::*}"
+  if [[ "$range_1" == "$range_2" && "${ipv6_1##*:}" != "${ipv6_2##*:}" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
 modprobe sit && apt-get install -y iproute2 netplan.io jq && systemctl unmask systemd-networkd && systemctl enable systemd-networkd && systemctl start systemd-networkd
 content=$(curl -s "http://ipwho.is" || true)
 public_ip=$(echo "$content" | jq -r .ip)
@@ -33,20 +44,64 @@ logo
 echo ""
 echo -e "\e[93m+-------------------------------------+\e[0m"
 echo ""
-echo -ne "$YELLOW Enter desired tunnel name (e.g. tun0 or farzad) $NC"
+validate_ipv4() {
+  [[ $1 =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]
+}
+validate_ipv6() {
+  [[ $1 =~ ^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$|([a-fA-F0-9]{1,4}:){1,7}:|([a-fA-F0-9]{1,4}:){1,6}:[a-fA-F0-9]{1,4}$ ]]
+}
+validate_name() {
+  [[ $1 =~ ^[a-zA-Z0-9_-]+$ ]]
+}
+echo -ne "$YELLOW Enter desired tunnel name (e.g., tun0 or farzad) $NC"
 read mytunnel && echo && echo
+while ! validate_name "$mytunnel"; do
+  echo -e "${RED}Invalid name. Only alphanumeric characters, underscores, and dashes are allowed.${NC}"
+  echo -ne "$YELLOW Enter desired tunnel name (e.g., tun0 or farzad) $NC"
+  read mytunnel && echo && echo
+done
 echo -ne "$YELLOW Enter current server IPv4 address [$GREEN $public_ip $YELLOW]: $NC"
 read ipv4
 ipv4=${ipv4:-$public_ip}
-echo "Selected IPv4: $ipv4"
-echo && echo
-echo -ne "$YELLOW Enter the local IPv6 private range (e.g. 2001:db8:85a3:1b2e::1 or 2002:db8:85a3:1b2e::1) $NC"
+while ! validate_ipv4 "$ipv4"; do
+  echo -e "${RED}Invalid IPv4 address. Please try again.${NC}" && echo
+  echo -ne "$YELLOW Enter current server IPv4 address: $NC"
+  read ipv4
+done
+echo -e "$CYAN Selected IPv4: $GREEN $ipv4 $NC" && echo && echo
+echo -ne "$YELLOW Enter the current (local) IPv6 private range (e.g., 2001:db8:85a3:1b2e::1 or 2002:db8:85a3:1b2e::1 , ...) $NC"
 read local_ipv6 && echo && echo
-echo -ne "$YELLOW Enter the gateway (remote) IPv6 private address (e.g. 2001:db8:85a3:1b2e::2 or 2002:db8:85a3:1b2e::2) $NC"
+while ! validate_ipv6 "$local_ipv6"; do
+  echo -e "${RED}Invalid IPv6 address. Please try again.${NC}"
+  echo -ne "$YELLOW Enter the local IPv6 private range: $NC"
+  read local_ipv6 && echo && echo
+done
+echo -ne "$YELLOW Enter the gateway (remote) IPv6 private address (e.g., 2001:db8:85a3:1b2e::2 or 2002:db8:85a3:1b2e::2 , ...) $NC"
 read gateway && echo && echo
-echo -ne "$YELLOW Enter the remote (public) IPv4 address (e.g. 203.0.113.1) $NC"
+while ! validate_ipv6 "$gateway"; do
+  echo -e "${RED}Invalid IPv6 address. Please try again.${NC}" && echo
+  echo -ne "$YELLOW Enter the gateway (remote) IPv6 private address: $NC"
+  read gateway && echo && echo
+done
+if ! compare_ipv6_range "$local_ipv6" "$gateway"; then
+  echo -e "${RED}Error: The local and gateway IPv6 addresses must be in the same range but with different final segments.${NC}"
+  exit 1
+fi
+echo -ne "$YELLOW Enter the remote (public) IPv4 address (e.g., 203.0.113.1) $NC"
 read endpoint_ip && echo && echo
-cat <<EOF | tee /etc/systemd/network/$mytunnel.network
+while ! validate_ipv4 "$endpoint_ip"; do
+  echo -e "${RED}Invalid IPv4 address. Please try again.${NC}" && echo
+  echo -ne "$YELLOW Enter the remote (public) IPv4 address: $NC"
+  read endpoint_ip && echo && echo
+done
+netplan_file="/etc/netplan/$mytunnel.yaml"
+networkd_file="/etc/systemd/network/$mytunnel.network"
+if [[ -e "$netplan_file" || -e "$networkd_file" ]]; then
+  echo -e "${RED}Configuration files for this tunnel name already exist. Exiting to prevent overwrite.${NC}" && echo
+  exit 1
+fi
+echo && echo -e "${MAGENTA}networkd file. $NC"
+cat <<EOF | tee "$networkd_file"
 [Match]
 Name=$mytunnel
 
@@ -54,8 +109,9 @@ Name=$mytunnel
 Address=$local_ipv6/64
 Gateway=$gateway
 EOF
-systemctl restart systemd-networkd
-cat <<EOF | tee /etc/netplan/$mytunnel.yaml
+echo && systemctl restart systemd-networkd
+echo -e "${MAGENTA}Netplan yaml file. $NC"
+cat <<EOF | tee "$netplan_file"
 network:
   version: 2
   tunnels:
@@ -69,6 +125,7 @@ network:
 EOF
 sleep 2
 netplan apply
+echo -e "${GREEN}Configuration applied successfully.${NC}"
 echo && echo
 printf "               ${RED}%s ${NC}\n" "SUMMARY"
 echo
