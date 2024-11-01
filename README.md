@@ -1,14 +1,15 @@
-## Quick Local tunnel (netplan) using sit module
+## Quick Local Tunnel (Netplan) Setup Using SIT Module
 
-### IT IS DESIGNED FOR MY PERSONAL USE BUT MAYBE HELP YOU OUT TO SAVE TIME.
+### Note
+ - Designed for personal use but may help others save time.
 
 ### Summerize
- - install necessary pkg`s (iproute2 netplan.io) and check the sit module
- - unmask systemd-networkd
- - creating netplan yaml file and network file to route traffic from local gateway
+ 1. Installs necessary packages (iproute2, netplan.io) and checks for SIT module support.
+ 2. Unmasks systemd-networkd for enabling tunnel management.
+ 3. Creates and configures Netplan and network files for local traffic routing through a defined gateway.
    
 ### To do:
- - add other protocle
+ - Add support for other protocols.
 
 ### Error Explanation
 #### If you see this error at the beginning:
@@ -19,21 +20,22 @@
 
 ![image](https://github.com/user-attachments/assets/e6047385-80a7-4d73-a24e-f1042ed94398)
 
-## TIP
-### ‼️ only answer above questions and repeat as many as you desire 
-### ‼️ Just be noted that interface name and local ip range should be unique. ‼️
+## TIP⚠️
+### Only answer specific questions above; repeat as needed.
+### Ensure interface names and local IP ranges are unique. 
 
 --------------------------
 
 ### INSTRUCTION
 
-#### 👉 Debian Base (Ubuntu & Debian) x86 & Arm64
+#### For Debian-based systems (Ubuntu & Debian), x86 & Arm64:
 
 ```
 bash <(curl -s https://raw.githubusercontent.com/opiran-club/quicktunnel/main/qtunnel.sh --ipv4)
 ```
-
-### Feel free to contribute xoxo
+---------------------------------------------------------------------------------------------------------------------------------------
+### Contributions
+#### Feel free to contribute. xoxo
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 ### Credits
