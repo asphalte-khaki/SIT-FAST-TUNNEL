@@ -35,7 +35,7 @@ bash <(curl -s https://raw.githubusercontent.com/opiran-club/quicktunnel/main/qt
  - (Error: SIT (Simple Internet Transition) module is not supported on this system. Local tunneling cannot proceed)
 #### What this means:
  - This error indicates that the sit module required for local tunneling is not supported in your server’s kernel. As a result, you cannot proceed with the tunnel setup using this module on this system.
---------------------------
+
 ---------------------------------------------------------------------------------------------------------------------------------------
 ### Contributions
 #### Feel free to contribute. xoxo
