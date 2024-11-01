@@ -36,7 +36,7 @@ compare_ipv6_range() {
     return 1
   fi
 }
-modprobe sit && apt-get install -y iproute2 netplan.io jq && systemctl unmask systemd-networkd && systemctl enable systemd-networkd && systemctl start systemd-networkd
+apt-get install -y iproute2 netplan.io jq && systemctl unmask systemd-networkd && systemctl enable systemd-networkd && systemctl start systemd-networkd
 content=$(curl -s "http://ipwho.is" || true)
 public_ip=$(echo "$content" | jq -r .ip)
 clear
@@ -44,6 +44,10 @@ logo
 echo ""
 echo -e "\e[93m+-------------------------------------+\e[0m"
 echo ""
+if ! modprobe sit; then
+  echo -e "${RED}Error: SIT (Simple Internet Transition) module is not supported on this system. Local tunneling cannot proceed.${NC}"
+  exit 1
+fi
 validate_ipv4() {
   [[ $1 =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]
 }
