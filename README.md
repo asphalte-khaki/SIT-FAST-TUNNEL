@@ -3,7 +3,7 @@
 ### Note
  - Designed for personal use but may help others save time.
 
-### Summerize
+### Summary
  1. Installs necessary packages (iproute2, netplan.io) and checks for SIT module support.
  2. Unmasks systemd-networkd for enabling tunnel management.
  3. Creates and configures Netplan and network files for local traffic routing through a defined gateway.
