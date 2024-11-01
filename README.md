@@ -10,9 +10,14 @@ Quick Local tunnel (netplan) using sit
  - add other protocle
 
 --------------------------
+
 ![image](https://github.com/user-attachments/assets/e6047385-80a7-4d73-a24e-f1042ed94398)
 
-### ‼️ only answer above question and repeat as many as you desire only change interface name and local ip range. ‼️
+## TIP
+### ‼️ only answer above questions and repeat as many as you desire 
+### ‼️ Just be noted that interface name and local ip range should be unique. ‼️
+
+--------------------------
 
 ### INSTRUCTION
 
